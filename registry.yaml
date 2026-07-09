@@ -13,3 +13,28 @@ packages:
     files:
       - name: helm
         src: linux-amd64/helm
+
+  - type: http
+    name: hashicorp/terraform
+    url: http://172.17.0.1:8081/repository/binaries/terraform/{{.Version}}/terraform_{{.Version}}_linux_amd64.zip
+    format: zip
+    files:
+      - name: terraform
+
+  - type: http
+    name: golang/go
+    url: http://172.17.0.1:8081/repository/binaries/go/{{.Version}}/go{{.Version}}.linux-amd64.tar.gz
+    format: tar.gz
+    files:
+      - name: go
+        src: go/bin/go
+      - name: gofmt
+        src: go/bin/gofmt
+
+  - type: http
+    name: astral-sh/uv
+    url: http://172.17.0.1:8081/repository/binaries/uv/{{.Version}}/uv-x86_64-unknown-linux-gnu.tar.gz
+    format: tar.gz
+    files:
+      - name: uv
+        src: uv-x86_64-unknown-linux-gnu/uv
