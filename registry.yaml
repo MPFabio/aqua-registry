@@ -1,14 +1,14 @@
 packages:
   - type: http
     name: kubernetes/kubectl
-    url: https://dl.k8s.io/release/{{.Version}}/bin/linux/amd64/kubectl
+    url: http://host.docker.internal:8081/repository/binaries/kubectl/{{.Version}}/kubectl
     format: raw
     files:
       - name: kubectl
 
   - type: http
     name: helm/helm
-    url: https://get.helm.sh/helm-{{.Version}}-linux-amd64.tar.gz
+    url: http://host.docker.internal:8081/repository/binaries/helm/{{.Version}}/helm-{{.Version}}-linux-amd64.tar.gz
     format: tar.gz
     files:
       - name: helm
