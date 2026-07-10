@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Installer le client aqua
-        uses: aquaproj/aqua-installer@v3.1.0
+        uses: aquaproj/aqua-installer@v3.1.2
         with:
           aqua_version: v2.60.1
         env:
@@ -38,7 +38,7 @@ jobs:
           AQUA_DISABLE_SLSA: "true"
 
       - name: Installer cosign
-        uses: sigstore/cosign-installer@v3.7.0
+        uses: sigstore/cosign-installer@v3.10.1
 
       - name: Install eager + vérification SLSA du catalogue
         env:
