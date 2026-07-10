@@ -1,7 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/aquaproj/aqua/main/json-schema/registry.json
 # https://aquaproj.github.io/docs/reference/registry-config/
 # https://aquaproj.github.io/docs/reference/security/cosign-slsa
+# Définitions recopiées du registre standard aqua au ref v4.534.0.
 packages:
+  # https://github.com/aquaproj/aqua-registry/blob/v4.534.0/pkgs/kubernetes/kubernetes/kubectl/registry.yaml
   - name: kubernetes/kubernetes/kubectl
     aliases:
       - name: kubernetes/kubectl
@@ -100,6 +102,7 @@ packages:
                 - "krel-staging@k8s-releng-prod.iam.gserviceaccount.com"
                 - --certificate-oidc-issuer
                 - "https://accounts.google.com"
+  # https://github.com/aquaproj/aqua-registry/blob/v4.534.0/pkgs/helm/helm/registry.yaml
   - type: http
     repo_owner: helm
     repo_name: helm
@@ -126,6 +129,7 @@ packages:
           type: http
           url: https://get.helm.sh/helm-{{.Version}}-{{.OS}}-{{.Arch}}.tar.gz.sha256
           algorithm: sha256
+  # https://github.com/aquaproj/aqua-registry/blob/v4.534.0/pkgs/hashicorp/terraform/registry.yaml
   - type: http
     repo_owner: hashicorp
     repo_name: terraform
@@ -143,6 +147,7 @@ packages:
     version_overrides:
       - version_constraint: "true"
         rosetta2: true
+  # https://github.com/aquaproj/aqua-registry/blob/v4.534.0/pkgs/golang/go/registry.yaml
   - repo_owner: golang
     repo_name: go
     type: http
@@ -159,6 +164,7 @@ packages:
     overrides:
       - goos: windows
         format: zip
+  # https://github.com/aquaproj/aqua-registry/blob/v4.534.0/pkgs/astral-sh/uv/registry.yaml
   - type: github_release
     repo_owner: astral-sh
     repo_name: uv
