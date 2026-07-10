@@ -1,0 +1,9 @@
+---
+# Policy du harness : seul le registre interne (local) est autorisé pour la
+# vérification. Chargée via AQUA_POLICY_CONFIG dans le gate.
+registries:
+  - name: internal
+    type: local
+    path: registry.yaml
+packages:
+  - registry: internal

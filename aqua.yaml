@@ -1,0 +1,23 @@
+# HARNESS DE VÉRIFICATION du catalogue (pas consommé par les projets).
+# Épingle une version de référence par outil pour que le gate aqua-verify
+# prouve, à chaque PR sur registry.yaml, que tout le catalogue s'installe et
+# passe la chaîne SLSA (cosign / attestations / checksum). Les repos projet
+# NE lisent PAS ce fichier : ils référencent registry.yaml via github_content.
+checksum:
+  enabled: true
+  require_checksum: true
+registries:
+  - type: local
+    name: internal
+    path: registry.yaml
+packages:
+  - name: kubernetes/kubectl@v1.30.14
+    registry: internal
+  - name: helm/helm@v3.15.4
+    registry: internal
+  - name: hashicorp/terraform@1.15.8
+    registry: internal
+  - name: golang/go@1.22.12
+    registry: internal
+  - name: astral-sh/uv@0.11.28
+    registry: internal

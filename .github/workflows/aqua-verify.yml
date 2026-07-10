@@ -1,0 +1,56 @@
+name: aqua-verify
+# Gate SLSA du CATALOGUE. Sur toute PR touchant le catalogue ou le harness,
+# installe les versions de référence depuis l'upstream et vérifie
+# cosign + attestations GitHub + checksum (vs lock). Vérif qui casse -> merge bloqué.
+on:
+  pull_request:
+    paths:
+      - 'registry.yaml'
+      - 'aqua.yaml'
+      - 'aqua-checksums.json'
+  push:
+    branches: [master]
+    paths:
+      - 'registry.yaml'
+      - 'aqua.yaml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write   # cosign (OIDC) / attestations
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer le client aqua
+        uses: aquaproj/aqua-installer@v3.1.0
+        with:
+          aqua_version: v2.60.1
+        env:
+          AQUA_DISABLE_SLSA: "true"   # bootstrap du client seulement (bug slsa-verifier)
+
+      - name: Installer cosign
+        uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Install eager + vérification SLSA du catalogue
+        env:
+          AQUA_GLOBAL_CONFIG: ${{ github.workspace }}/aqua.yaml
+          AQUA_POLICY_CONFIG: ${{ github.workspace }}/aqua-policy.yaml
+          AQUA_ROOT_DIR: ${{ runner.temp }}/aqua-root   # racine vierge -> tout revérifié
+          AQUA_LOG_LEVEL: debug
+          GITHUB_TOKEN: ${{ github.token }}             # gh attestation verify
+        run: |
+          set -o pipefail
+          aqua install -a 2>&1 | tee aqua-install.log
+
+      - name: Preuve de vérification
+        if: always()
+        run: |
+          echo "## Vérifications SLSA du catalogue" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep -iE "verifying a file with Cosign|verify GitHub Artifact Attestations|checksum" aqua-install.log \
+            | sed 's/\x1b\[[0-9;]*m//g' | sort -u >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
