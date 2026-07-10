@@ -1,8 +1,5 @@
-# HARNESS DE VÉRIFICATION du catalogue (pas consommé par les projets).
-# Épingle une version de référence par outil pour que le gate aqua-verify
-# prouve, à chaque PR sur registry.yaml, que tout le catalogue s'installe et
-# passe la chaîne SLSA (cosign / attestations / checksum). Les repos projet
-# NE lisent PAS ce fichier : ils référencent registry.yaml via github_content.
+# https://aquaproj.github.io/docs/reference/config/
+# https://aquaproj.github.io/docs/reference/checksum
 checksum:
   enabled: true
   require_checksum: true

@@ -1,16 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/aquaproj/aqua/main/json-schema/registry.json
-# =====================================================================
-# REGISTRE AQUA INTERNE — socle DevOps (source de vérité des outils validés)
-# =====================================================================
-# Recopié fidèlement depuis le registre standard aqua au ref v4.534.0.
-# Les binaires sont tirés de la SOURCE OFFICIELLE upstream (dl.k8s.io,
-# get.helm.sh, releases.hashicorp.com, golang.org, github.com) -> cela
-# PRESERVE la verification cosign / attestations / checksum (SLSA).
-# Aucun binaire ne transite par un miroir : on garde la main sur le
-# CATALOGUE (quels outils/versions existent) sans casser la chaine SLSA.
-# Pour ajouter/retirer un outil : editer ce fichier via PR (gate aqua-verify).
+# https://aquaproj.github.io/docs/reference/registry-config/
+# https://aquaproj.github.io/docs/reference/security/cosign-slsa
 packages:
-  # --- depuis pkgs/kubernetes/kubectl ---
   - name: kubernetes/kubernetes/kubectl
     aliases:
       - name: kubernetes/kubectl
@@ -109,7 +100,6 @@ packages:
                 - "krel-staging@k8s-releng-prod.iam.gserviceaccount.com"
                 - --certificate-oidc-issuer
                 - "https://accounts.google.com"
-  # --- depuis pkgs/helm/helm ---
   - type: http
     repo_owner: helm
     repo_name: helm
@@ -136,7 +126,6 @@ packages:
           type: http
           url: https://get.helm.sh/helm-{{.Version}}-{{.OS}}-{{.Arch}}.tar.gz.sha256
           algorithm: sha256
-  # --- depuis pkgs/hashicorp/terraform ---
   - type: http
     repo_owner: hashicorp
     repo_name: terraform
@@ -154,7 +143,6 @@ packages:
     version_overrides:
       - version_constraint: "true"
         rosetta2: true
-  # --- depuis pkgs/golang/go ---
   - repo_owner: golang
     repo_name: go
     type: http
@@ -171,7 +159,6 @@ packages:
     overrides:
       - goos: windows
         format: zip
-  # --- depuis pkgs/astral-sh/uv ---
   - type: github_release
     repo_owner: astral-sh
     repo_name: uv

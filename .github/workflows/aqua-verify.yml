@@ -1,7 +1,6 @@
+# https://aquaproj.github.io/docs/reference/security/cosign-slsa
+# https://aquaproj.github.io/docs/products/aqua-installer
 name: aqua-verify
-# Gate SLSA du CATALOGUE. Sur toute PR touchant le catalogue ou le harness,
-# installe les versions de référence depuis l'upstream et vérifie
-# cosign + attestations GitHub + checksum (vs lock). Vérif qui casse -> merge bloqué.
 on:
   pull_request:
     paths:
@@ -17,7 +16,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write   # cosign (OIDC) / attestations
+  id-token: write
 
 jobs:
   verify:
@@ -30,7 +29,8 @@ jobs:
         with:
           aqua_version: v2.60.1
         env:
-          AQUA_DISABLE_SLSA: "true"   # bootstrap du client seulement (bug slsa-verifier)
+          # https://github.com/slsa-framework/slsa-verifier/issues/765
+          AQUA_DISABLE_SLSA: "true"
 
       - name: Installer cosign
         uses: sigstore/cosign-installer@v3.7.0
@@ -39,9 +39,9 @@ jobs:
         env:
           AQUA_GLOBAL_CONFIG: ${{ github.workspace }}/aqua.yaml
           AQUA_POLICY_CONFIG: ${{ github.workspace }}/aqua-policy.yaml
-          AQUA_ROOT_DIR: ${{ runner.temp }}/aqua-root   # racine vierge -> tout revérifié
+          AQUA_ROOT_DIR: ${{ runner.temp }}/aqua-root
           AQUA_LOG_LEVEL: debug
-          GITHUB_TOKEN: ${{ github.token }}             # gh attestation verify
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -o pipefail
           aqua install -a 2>&1 | tee aqua-install.log
