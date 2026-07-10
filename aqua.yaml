@@ -1,5 +1,5 @@
 # https://aquaproj.github.io/docs/reference/config/
-# https://aquaproj.github.io/docs/reference/checksum
+# https://aquaproj.github.io/docs/reference/config/checksum
 checksum:
   enabled: true
   require_checksum: true

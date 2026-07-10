@@ -1,4 +1,4 @@
-# https://aquaproj.github.io/docs/reference/security/policy
+# https://aquaproj.github.io/docs/reference/security/policy-as-code/
 ---
 registries:
   - name: internal

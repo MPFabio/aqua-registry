@@ -1,4 +1,5 @@
 # https://aquaproj.github.io/docs/reference/security/cosign-slsa
+# https://aquaproj.github.io/docs/reference/security/policy-as-code/
 # https://aquaproj.github.io/docs/products/aqua-installer
 name: aqua-verify
 on:
