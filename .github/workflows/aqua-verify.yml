@@ -30,7 +30,7 @@ jobs:
         with:
           aqua_version: v2.60.1
         env:
-          # https://github.com/slsa-framework/slsa-verifier/issues/765
+          # https://github.com/slsa-framework/slsa-verifier/pull/799
           AQUA_DISABLE_SLSA: "true"
 
       - name: Installer cosign
