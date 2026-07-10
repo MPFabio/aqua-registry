@@ -31,8 +31,10 @@ jobs:
           aqua_version: v2.60.1
         env:
           # Désactive la vérif SLSA du binaire aqua au bootstrap uniquement :
-          # slsa-verifier ne sait pas encore lire le bundle Sigstore d'aqua
-          # (fix en cours : https://github.com/slsa-framework/slsa-verifier/pull/799).
+          # aqua v2.60.1 embarque slsa-verifier v2.6.0, antérieur au support des
+          # entrées tlog dssev001 (ajouté en slsa-verifier v2.7.1, cf
+          # https://github.com/slsa-framework/slsa-verifier/pull/799) -> la vérif
+          # du binaire aqua échoue. À retirer quand aqua bumpera slsa-verifier.
           # aqua reste vérifié par checksum ; les OUTILS gardent cosign/attestations.
           AQUA_DISABLE_SLSA: "true"
 
