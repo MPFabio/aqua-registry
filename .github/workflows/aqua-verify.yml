@@ -8,16 +8,15 @@ on:
       - 'registry.yaml'
       - 'aqua.yaml'
       - 'aqua-checksums.json'
-  push:
-    branches: [master]
-    paths:
-      - 'registry.yaml'
-      - 'aqua.yaml'
   workflow_dispatch: {}
 
 permissions:
   contents: read
   id-token: write
+
+concurrency:
+  group: aqua-verify-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:
@@ -46,7 +45,7 @@ jobs:
           AQUA_GLOBAL_CONFIG: ${{ github.workspace }}/aqua.yaml
           AQUA_POLICY_CONFIG: ${{ github.workspace }}/aqua-policy.yaml
           AQUA_ROOT_DIR: ${{ runner.temp }}/aqua-root
-          AQUA_LOG_LEVEL: debug
+          AQUA_LOG_LEVEL: info
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -o pipefail
