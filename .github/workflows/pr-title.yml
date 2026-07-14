@@ -1,0 +1,34 @@
+# https://www.conventionalcommits.org/en/v1.0.0/
+# https://github.com/amannn/action-semantic-pull-request
+# Le repo est en squash-merge only : le TITRE de la PR devient LE message de
+# commit sur master. Ce check impose donc le format Conventional Commits au
+# titre — c'est ce que release-please lira pour calculer la version.
+name: pr-title
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+concurrency:
+  group: pr-title-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            ci
+            chore
+            refactor
+            test
+          requireScope: false
