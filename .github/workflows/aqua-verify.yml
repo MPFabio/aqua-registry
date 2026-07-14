@@ -1,13 +1,15 @@
 # https://aquaproj.github.io/docs/reference/security/cosign-slsa
 # https://aquaproj.github.io/docs/reference/security/policy-as-code/
 # https://aquaproj.github.io/docs/products/aqua-installer
+# https://github.com/dorny/paths-filter
 name: aqua-verify
+# Le check "verify" est requis par la branch protection : le workflow se
+# déclenche donc sur TOUTES les PR (pas de filtre paths au niveau du trigger,
+# sinon les PR hors-scope attendent un statut qui n'arrive jamais). Le filtre
+# de chemins est fait EN INTERNE : la vérification SLSA lourde ne tourne que
+# si le catalogue/harness a changé ; sinon le job répond vert immédiatement.
 on:
-  pull_request:
-    paths:
-      - 'registry.yaml'
-      - 'aqua.yaml'
-      - 'aqua-checksums.json'
+  pull_request: {}
   workflow_dispatch: {}
 
 permissions:
@@ -24,7 +26,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Détecter si le catalogue a changé
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            catalog:
+              - 'registry.yaml'
+              - 'aqua.yaml'
+              - 'aqua-policy.yaml'
+              - 'aqua-checksums.json'
+
       - name: Installer le client aqua
+        if: steps.changes.outputs.catalog == 'true' || github.event_name == 'workflow_dispatch'
         uses: aquaproj/aqua-installer@v3.1.0
         with:
           aqua_version: v2.60.1
@@ -38,9 +52,11 @@ jobs:
           AQUA_DISABLE_SLSA: "true"
 
       - name: Installer cosign
+        if: steps.changes.outputs.catalog == 'true' || github.event_name == 'workflow_dispatch'
         uses: sigstore/cosign-installer@v3.7.0
 
       - name: Install eager + vérification SLSA du catalogue
+        if: steps.changes.outputs.catalog == 'true' || github.event_name == 'workflow_dispatch'
         env:
           AQUA_GLOBAL_CONFIG: ${{ github.workspace }}/aqua.yaml
           AQUA_POLICY_CONFIG: ${{ github.workspace }}/aqua-policy.yaml
@@ -52,10 +68,16 @@ jobs:
           aqua install -a 2>&1 | tee aqua-install.log
 
       - name: Preuve de vérification
-        if: always()
+        if: always() && (steps.changes.outputs.catalog == 'true' || github.event_name == 'workflow_dispatch')
         run: |
           echo "## Vérifications SLSA du catalogue" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           grep -iE "verifying a file with Cosign|verify GitHub Artifact Attestations|checksum" aqua-install.log \
             | sed 's/\x1b\[[0-9;]*m//g' | sort -u >> "$GITHUB_STEP_SUMMARY" || true
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Hors périmètre catalogue — rien à vérifier
+        if: steps.changes.outputs.catalog != 'true' && github.event_name != 'workflow_dispatch'
+        run: |
+          echo "## Gate aqua-verify" >> "$GITHUB_STEP_SUMMARY"
+          echo "Aucun fichier du catalogue modifié : pas de vérification SLSA à rejouer." >> "$GITHUB_STEP_SUMMARY"
