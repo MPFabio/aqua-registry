@@ -54,7 +54,7 @@ jobs:
 
       - name: Installer cosign
         if: steps.changes.outputs.catalog == 'true' || github.event_name == 'workflow_dispatch'
-        uses: sigstore/cosign-installer@v3.7.0
+        uses: sigstore/cosign-installer@v4.1.2
 
       - name: Install eager + vérification SLSA du catalogue
         if: steps.changes.outputs.catalog == 'true' || github.event_name == 'workflow_dispatch'
