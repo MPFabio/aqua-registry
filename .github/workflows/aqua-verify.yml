@@ -40,7 +40,7 @@ jobs:
 
       - name: Installer le client aqua
         if: steps.changes.outputs.catalog == 'true' || github.event_name == 'workflow_dispatch'
-        uses: aquaproj/aqua-installer@v3.1.0
+        uses: aquaproj/aqua-installer@v4.0.5
         with:
           aqua_version: v2.60.1
         env:
